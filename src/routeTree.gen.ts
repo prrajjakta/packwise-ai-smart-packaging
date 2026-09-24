@@ -11,6 +11,7 @@
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as AboutRouteImport } from './routes/about'
+import { Route as AnalyzeRouteImport } from './routes/analyze'
 import { Route as MaterialsRouteImport } from './routes/materials'
 
 const IndexRoute = IndexRouteImport.update({
@@ -23,6 +24,11 @@ const AboutRoute = AboutRouteImport.update({
   path: '/about',
   getParentRoute: () => rootRouteImport,
 } as any)
+const AnalyzeRoute = AnalyzeRouteImport.update({
+  id: '/analyze',
+  path: '/analyze',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const MaterialsRoute = MaterialsRouteImport.update({
   id: '/materials',
   path: '/materials',
@@ -32,30 +38,34 @@ const MaterialsRoute = MaterialsRouteImport.update({
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/about': typeof AboutRoute
+  '/analyze': typeof AnalyzeRoute
   '/materials': typeof MaterialsRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/about': typeof AboutRoute
+  '/analyze': typeof AnalyzeRoute
   '/materials': typeof MaterialsRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
   '/about': typeof AboutRoute
+  '/analyze': typeof AnalyzeRoute
   '/materials': typeof MaterialsRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/about' | '/materials'
+  fullPaths: '/' | '/about' | '/analyze' | '/materials'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/about' | '/materials'
-  id: '__root__' | '/' | '/about' | '/materials'
+  to: '/' | '/about' | '/analyze' | '/materials'
+  id: '__root__' | '/' | '/about' | '/analyze' | '/materials'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   AboutRoute: typeof AboutRoute
+  AnalyzeRoute: typeof AnalyzeRoute
   MaterialsRoute: typeof MaterialsRoute
 }
 
@@ -75,6 +85,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AboutRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/analyze': {
+      id: '/analyze'
+      path: '/analyze'
+      fullPath: '/analyze'
+      preLoaderRoute: typeof AnalyzeRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/materials': {
       id: '/materials'
       path: '/materials'
@@ -88,6 +105,7 @@ declare module '@tanstack/react-router' {
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   AboutRoute: AboutRoute,
+  AnalyzeRoute: AnalyzeRoute,
   MaterialsRoute: MaterialsRoute,
 }
 export const routeTree = rootRouteImport
