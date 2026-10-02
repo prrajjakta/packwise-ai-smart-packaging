@@ -12,6 +12,7 @@ import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as AboutRouteImport } from './routes/about'
 import { Route as AnalyzeRouteImport } from './routes/analyze'
+import { Route as HistoryRouteImport } from './routes/history'
 import { Route as MaterialsRouteImport } from './routes/materials'
 import { Route as ResultsRouteImport } from './routes/results'
 
@@ -30,6 +31,11 @@ const AnalyzeRoute = AnalyzeRouteImport.update({
   path: '/analyze',
   getParentRoute: () => rootRouteImport,
 } as any)
+const HistoryRoute = HistoryRouteImport.update({
+  id: '/history',
+  path: '/history',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const MaterialsRoute = MaterialsRouteImport.update({
   id: '/materials',
   path: '/materials',
@@ -45,6 +51,7 @@ export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/about': typeof AboutRoute
   '/analyze': typeof AnalyzeRoute
+  '/history': typeof HistoryRoute
   '/materials': typeof MaterialsRoute
   '/results': typeof ResultsRoute
 }
@@ -52,6 +59,7 @@ export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/about': typeof AboutRoute
   '/analyze': typeof AnalyzeRoute
+  '/history': typeof HistoryRoute
   '/materials': typeof MaterialsRoute
   '/results': typeof ResultsRoute
 }
@@ -60,21 +68,31 @@ export interface FileRoutesById {
   '/': typeof IndexRoute
   '/about': typeof AboutRoute
   '/analyze': typeof AnalyzeRoute
+  '/history': typeof HistoryRoute
   '/materials': typeof MaterialsRoute
   '/results': typeof ResultsRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/about' | '/analyze' | '/materials' | '/results'
+  fullPaths:
+    '/' | '/about' | '/analyze' | '/history' | '/materials' | '/results'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/about' | '/analyze' | '/materials' | '/results'
-  id: '__root__' | '/' | '/about' | '/analyze' | '/materials' | '/results'
+  to: '/' | '/about' | '/analyze' | '/history' | '/materials' | '/results'
+  id:
+    | '__root__'
+    | '/'
+    | '/about'
+    | '/analyze'
+    | '/history'
+    | '/materials'
+    | '/results'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   AboutRoute: typeof AboutRoute
   AnalyzeRoute: typeof AnalyzeRoute
+  HistoryRoute: typeof HistoryRoute
   MaterialsRoute: typeof MaterialsRoute
   ResultsRoute: typeof ResultsRoute
 }
@@ -102,6 +120,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AnalyzeRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/history': {
+      id: '/history'
+      path: '/history'
+      fullPath: '/history'
+      preLoaderRoute: typeof HistoryRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/materials': {
       id: '/materials'
       path: '/materials'
@@ -123,6 +148,7 @@ const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   AboutRoute: AboutRoute,
   AnalyzeRoute: AnalyzeRoute,
+  HistoryRoute: HistoryRoute,
   MaterialsRoute: MaterialsRoute,
   ResultsRoute: ResultsRoute,
 }
