@@ -163,22 +163,22 @@ function AnalyzePage() {
   const validate = (index: number) => {
     const e: Record<string, string> = {};
     if (index === 1) {
-      if (draft.moisture < 0 || draft.moisture > 100) e.moisture = "Moisture must be 0–100%.";
-      if (draft.oilFat < 0 || draft.oilFat > 100) e.oilFat = "Oil/fat must be 0–100%.";
-      if (draft.ph < 1 || draft.ph > 14) e.ph = "pH must be between 1 and 14.";
+      if (draft.moisture < 0 || draft.moisture > 100) e["moisture"] = "Moisture must be 0–100%.";
+      if (draft.oilFat < 0 || draft.oilFat > 100) e["oilFat"] = "Oil/fat must be 0–100%.";
+      if (draft.ph < 1 || draft.ph > 14) e["ph"] = "pH must be between 1 and 14.";
       if (draft.foodType === "Fresh produce" && (draft.respiration < 0 || draft.respiration > 300))
-        e.respiration = "Respiration rate must be 0–300 mg CO₂/kg·h.";
+        e["respiration"] = "Respiration rate must be 0–300 mg CO₂/kg·h.";
     }
     if (index === 2) {
-      if (!draft.source.trim()) e.source = "Enter a source city.";
-      if (!draft.destination.trim()) e.destination = "Enter a destination city.";
-      if (draft.distanceKm <= 0 || draft.distanceKm > 5000) e.distanceKm = "Distance must be 1–5000 km.";
+      if (!draft.source["trim"]()) e["source"] = "Enter a source city.";
+      if (!draft.destination.trim()) e["destination"] = "Enter a destination city.";
+      if (draft.distanceKm <= 0 || draft.distanceKm > 5000) e["distanceKm"] = "Distance must be 1–5000 km.";
       if (draft.durationHours <= 0 || draft.durationHours > 720)
-        e.durationHours = "Duration must be 1–720 hours.";
+        e["durationHours"] = "Duration must be 1–720 hours.";
     }
     if (index === 3) {
       if (draft.shelfLifeDays <= 0 || draft.shelfLifeDays > 720)
-        e.shelfLifeDays = "Required shelf life must be 1–720 days.";
+        e["shelfLifeDays"] = "Required shelf life must be 1–720 days.";
     }
     setErrors(e);
     if (Object.keys(e).length) toast.error("Please fix the highlighted fields.");
