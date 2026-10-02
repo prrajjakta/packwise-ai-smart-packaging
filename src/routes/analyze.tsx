@@ -170,7 +170,7 @@ function AnalyzePage() {
         e["respiration"] = "Respiration rate must be 0–300 mg CO₂/kg·h.";
     }
     if (index === 2) {
-      if (!draft.source["trim"]()) e["source"] = "Enter a source city.";
+      if (!draft.source.trim()) e["source"] = "Enter a source city.";
       if (!draft.destination.trim()) e["destination"] = "Enter a destination city.";
       if (draft.distanceKm <= 0 || draft.distanceKm > 5000) e["distanceKm"] = "Distance must be 1–5000 km.";
       if (draft.durationHours <= 0 || draft.durationHours > 720)
