@@ -41,6 +41,9 @@ import {
 } from "@/components/ui/select";
 import { Slider } from "@/components/ui/slider";
 import { cn } from "@/lib/utils";
+import { LocationSearch } from "@/components/route/LocationSearch";
+import { RouteMap } from "@/components/route/RouteMap";
+import { DEFAULT_DEST, DEFAULT_SOURCE, type Place, fetchRoute } from "@/lib/geo";
 
 export const Route = createFileRoute("/analyze")({
   head: () => ({
@@ -107,6 +110,41 @@ function AnalyzePage() {
   const [detected, setDetected] = useState<{ name: string; confidence: number } | null>(null);
   const [preview, setPreview] = useState<string | null>(null);
   const [errors, setErrors] = useState<Record<string, string>>({});
+  const [srcPlace, setSrcPlace] = useState<Place | null>(DEFAULT_SOURCE);
+  const [dstPlace, setDstPlace] = useState<Place | null>(DEFAULT_DEST);
+  const [routeCoords, setRouteCoords] = useState<[number, number][] | null>(null);
+  const [routeLoading, setRouteLoading] = useState(false);
+  const [routeError, setRouteError] = useState<string | null>(null);
+
+  // Fetch the real driving route once both ends have coordinates; auto-fill distance/duration.
+  useEffect(() => {
+    if (!srcPlace || !dstPlace) {
+      setRouteCoords(null);
+      return;
+    }
+    const ctrl = new AbortController();
+    setRouteLoading(true);
+    setRouteError(null);
+    fetchRoute(srcPlace, dstPlace, ctrl.signal)
+      .then((r) => {
+        setRouteCoords(r.coords);
+        setDraft((d) => ({
+          ...d,
+          distanceKm: Math.max(1, r.distanceKm),
+          durationHours: Math.max(1, Math.round(r.durationHours)),
+        }));
+      })
+      .catch(() => {
+        if (!ctrl.signal.aborted) {
+          setRouteCoords(null);
+          setRouteError("We couldn't fetch the driving route.");
+        }
+      })
+      .finally(() => {
+        if (!ctrl.signal.aborted) setRouteLoading(false);
+      });
+    return () => ctrl.abort();
+  }, [srcPlace, dstPlace]);
   const [running, setRunning] = useState(false);
   const [pipelineStage, setPipelineStage] = useState(-1);
   const fileRef = useRef<HTMLInputElement>(null);
@@ -400,16 +438,41 @@ function AnalyzePage() {
         {step === 2 && (
           <div className="grid gap-5 sm:grid-cols-2">
             <Field label="Source city" error={errors["source"]}>
-              <Input value={draft.source} onChange={(e) => set("source", e.target.value)} />
+              <LocationSearch
+                value={draft.source}
+                placeholder="Search a city or town"
+                onTextChange={(t) => {
+                  set("source", t);
+                  setSrcPlace(null);
+                }}
+                onSelect={(p) => {
+                  set("source", p.name.split(",")[0]!);
+                  setSrcPlace(p);
+                }}
+              />
             </Field>
             <Field label="Destination city" error={errors["destination"]}>
-              <Input
+              <LocationSearch
                 value={draft.destination}
-                onChange={(e) => set("destination", e.target.value)}
+                placeholder="Search a city or town"
+                onTextChange={(t) => {
+                  set("destination", t);
+                  setDstPlace(null);
+                }}
+                onSelect={(p) => {
+                  set("destination", p.name.split(",")[0]!);
+                  setDstPlace(p);
+                }}
               />
             </Field>
             <div className="sm:col-span-2">
-              <RouteGraphic from={draft.source} to={draft.destination} km={draft.distanceKm} />
+              <RouteMap
+                source={srcPlace}
+                dest={dstPlace}
+                coords={routeCoords}
+                loading={routeLoading}
+                error={routeError}
+              />
             </div>
             <NumField
               label="Distance (km)"
@@ -661,34 +724,6 @@ function RatingField({
         ))}
       </div>
     </Field>
-  );
-}
-
-function RouteGraphic({ from, to, km }: { from: string; to: string; km: number }) {
-  return (
-    <div className="rounded-2xl border border-border/70 bg-white/5 p-5">
-      <svg viewBox="0 0 400 90" className="w-full">
-        <path
-          d="M30 60 C 120 10, 280 100, 370 40"
-          fill="none"
-          stroke="var(--mustard)"
-          strokeWidth="2.5"
-          strokeDasharray="8 8"
-          style={{ animation: "pw-dash 6s linear infinite" }}
-        />
-        <circle cx="30" cy="60" r="7" fill="var(--leaf)" />
-        <circle cx="370" cy="40" r="7" fill="var(--mustard)" />
-        <text x="20" y="84" fill="currentColor" fontSize="12" opacity="0.85">
-          {from || "Source"}
-        </text>
-        <text x="330" y="22" fill="currentColor" fontSize="12" opacity="0.85">
-          {to || "Destination"}
-        </text>
-      </svg>
-      <div className="mt-2 flex items-center gap-2 text-sm text-muted-foreground">
-        <Truck className="h-4 w-4 text-leaf" /> Illustrative route · approx. {km || 0} km
-      </div>
-    </div>
   );
 }
 
