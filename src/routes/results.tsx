@@ -3,6 +3,7 @@ import {
   Boxes,
   Download,
   FileSearch,
+  History,
   Leaf,
   Printer,
   QrCode,
@@ -235,6 +236,11 @@ function ResultsPage() {
         <div className="flex flex-wrap gap-2">
           <Button variant="outline" onClick={() => window.print()}>
             <Printer className="mr-2 h-4 w-4" /> Print / save as PDF
+          </Button>
+          <Button asChild variant="outline">
+            <Link to="/history">
+              <History className="mr-2 h-4 w-4" /> History
+            </Link>
           </Button>
           <Button asChild>
             <Link to="/analyze">

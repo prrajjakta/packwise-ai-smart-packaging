@@ -163,22 +163,22 @@ function AnalyzePage() {
   const validate = (index: number) => {
     const e: Record<string, string> = {};
     if (index === 1) {
-      if (draft.moisture < 0 || draft.moisture > 100) e.moisture = "Moisture must be 0–100%.";
-      if (draft.oilFat < 0 || draft.oilFat > 100) e.oilFat = "Oil/fat must be 0–100%.";
-      if (draft.ph < 1 || draft.ph > 14) e.ph = "pH must be between 1 and 14.";
+      if (draft.moisture < 0 || draft.moisture > 100) e["moisture"] = "Moisture must be 0–100%.";
+      if (draft.oilFat < 0 || draft.oilFat > 100) e["oilFat"] = "Oil/fat must be 0–100%.";
+      if (draft.ph < 1 || draft.ph > 14) e["ph"] = "pH must be between 1 and 14.";
       if (draft.foodType === "Fresh produce" && (draft.respiration < 0 || draft.respiration > 300))
-        e.respiration = "Respiration rate must be 0–300 mg CO₂/kg·h.";
+        e["respiration"] = "Respiration rate must be 0–300 mg CO₂/kg·h.";
     }
     if (index === 2) {
-      if (!draft.source.trim()) e.source = "Enter a source city.";
-      if (!draft.destination.trim()) e.destination = "Enter a destination city.";
-      if (draft.distanceKm <= 0 || draft.distanceKm > 5000) e.distanceKm = "Distance must be 1–5000 km.";
+      if (!draft.source.trim()) e["source"] = "Enter a source city.";
+      if (!draft.destination.trim()) e["destination"] = "Enter a destination city.";
+      if (draft.distanceKm <= 0 || draft.distanceKm > 5000) e["distanceKm"] = "Distance must be 1–5000 km.";
       if (draft.durationHours <= 0 || draft.durationHours > 720)
-        e.durationHours = "Duration must be 1–720 hours.";
+        e["durationHours"] = "Duration must be 1–720 hours.";
     }
     if (index === 3) {
       if (draft.shelfLifeDays <= 0 || draft.shelfLifeDays > 720)
-        e.shelfLifeDays = "Required shelf life must be 1–720 days.";
+        e["shelfLifeDays"] = "Required shelf life must be 1–720 days.";
     }
     setErrors(e);
     if (Object.keys(e).length) toast.error("Please fix the highlighted fields.");
@@ -361,27 +361,27 @@ function AnalyzePage() {
               label="Moisture content (%)"
               value={draft.moisture}
               onChange={(v) => set("moisture", v)}
-              error={errors.moisture}
+              error={errors["moisture"]}
             />
             <NumField
               label="Oil / fat content (%)"
               value={draft.oilFat}
               onChange={(v) => set("oilFat", v)}
-              error={errors.oilFat}
+              error={errors["oilFat"]}
             />
             <NumField
               label="pH"
               step={0.1}
               value={draft.ph}
               onChange={(v) => set("ph", v)}
-              error={errors.ph}
+              error={errors["ph"]}
             />
             {draft.foodType === "Fresh produce" && (
               <NumField
                 label="Respiration rate (mg CO₂/kg·h)"
                 value={draft.respiration}
                 onChange={(v) => set("respiration", v)}
-                error={errors.respiration}
+                error={errors["respiration"]}
               />
             )}
             <RatingField
@@ -399,10 +399,10 @@ function AnalyzePage() {
 
         {step === 2 && (
           <div className="grid gap-5 sm:grid-cols-2">
-            <Field label="Source city" error={errors.source}>
+            <Field label="Source city" error={errors["source"]}>
               <Input value={draft.source} onChange={(e) => set("source", e.target.value)} />
             </Field>
-            <Field label="Destination city" error={errors.destination}>
+            <Field label="Destination city" error={errors["destination"]}>
               <Input
                 value={draft.destination}
                 onChange={(e) => set("destination", e.target.value)}
@@ -415,13 +415,13 @@ function AnalyzePage() {
               label="Distance (km)"
               value={draft.distanceKm}
               onChange={(v) => set("distanceKm", v)}
-              error={errors.distanceKm}
+              error={errors["distanceKm"]}
             />
             <NumField
               label="Transport duration (hours)"
               value={draft.durationHours}
               onChange={(v) => set("durationHours", v)}
-              error={errors.durationHours}
+              error={errors["durationHours"]}
             />
             <Field label="Route condition">
               <Select
@@ -500,7 +500,7 @@ function AnalyzePage() {
               label="Required shelf life (days)"
               value={draft.shelfLifeDays}
               onChange={(v) => set("shelfLifeDays", v)}
-              error={errors.shelfLifeDays}
+              error={errors["shelfLifeDays"]}
             />
           </div>
         )}
@@ -590,7 +590,7 @@ function Field({
   children,
 }: {
   label: string;
-  error?: string;
+  error?: string | undefined;
   children: React.ReactNode;
 }) {
   return (
@@ -616,7 +616,7 @@ function NumField({
   label: string;
   value: number;
   onChange: (v: number) => void;
-  error?: string;
+  error?: string | undefined;
   step?: number;
 }) {
   return (
